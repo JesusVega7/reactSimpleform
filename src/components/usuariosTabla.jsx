@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content'
-import { show_alert } from '../functions/functions';
-import Formulario from './formulario';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Formulario from './formulario2';
 
 
 const UsuariosTabla = () => {
@@ -27,6 +26,18 @@ const UsuariosTabla = () => {
         }
       };
 
+      const deleteUser = async (user) => {
+        try {
+          const respuesta = await axios.delete(`${url}/${user.id}`);
+          if (respuesta) {
+            setUsers(users.filter((u) => u.id !== user.id));
+            toast.success('usuario eliminado correctamente');
+          }
+        } catch (error) {
+          toast.error('error eliminando', error);
+        }
+      };
+
       const [selectedUser, setSelectedUser] = useState(null);
 
       const handleEdit = (user) => {
@@ -35,9 +46,28 @@ const UsuariosTabla = () => {
       };
 
       const handleCreate = () => {
-        setSelectedUser({});
+        console.log('hndlcreate')
+        setSelectedUser(null);
 
         setModalIsOpen(true);
+      };
+
+      const handleDelete = (user) => {
+        deleteUser(user);
+        
+      };
+      
+      const actualizarTabla = (newData, type) => {
+        if (type === 'create') setUsers([...users, newData]);
+        if (type === 'edit') {
+          let temporalArray = [...users]; 
+          const index = temporalArray.findIndex(user=> user.id === newData.id) ;
+          if (index !== -1) {
+            temporalArray[index] = newData;
+            setUsers([...temporalArray])
+          }
+        
+        }
       };
       
   return (
@@ -70,7 +100,7 @@ const UsuariosTabla = () => {
                         <tbody className='table-group-divider'>
                             {users.map( (user,i)=> (
                                 <tr key={user.id}>
-                                    <td>{(i+1)}</td>
+                                    <td>{user.id}</td>
                                     <td>{user.nombres}</td>
                                     <td>{user.apellidoPaterno}</td>
                                     <td>{user.apellidoMaterno}</td>
@@ -83,11 +113,10 @@ const UsuariosTabla = () => {
                                         </button>
                                         
                                         &nbsp;
-                                        <button className='btn btn-danger'>
+                                        <button className='btn btn-danger' onClick={() => {handleDelete(user)}}>
                                             <i className='fa-solid fa-trash'></i>
                                         </button>
                                     </td>
-
                                 </tr>
                             ))
 
@@ -95,7 +124,7 @@ const UsuariosTabla = () => {
                         </tbody>
                       </table>
 
-                      <Formulario id='modalForm' isOpen={modalIsOpen}  onRequestClose={() => setModalIsOpen(false)} user={selectedUser}>
+                      <Formulario actualizarTabla={actualizarTabla} id='modalForm' isOpen={modalIsOpen}  onRequestClose={() => setModalIsOpen(false)} user={selectedUser}>
 
                       </Formulario>
                     </div>

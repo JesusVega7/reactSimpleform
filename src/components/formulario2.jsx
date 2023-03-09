@@ -4,8 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { Container, FormControl, InputLabel, Input, FormHelperText, Select, MenuItem, Button } from '@material-ui/core';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'
-import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const url = 'http://localhost:3000/api/users';
 
@@ -16,13 +19,16 @@ const customStyles = {
     right: 'auto',
     bottom: 'auto',
     marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
+    transform: 'translate(-50%, -50%)',
+    border: 'none',
+    background: 'none', 
+    overflow: 'none'
   }
 };
 
 Modal.setAppElement('#root');
 
-const Formulario = ({ isOpen, onRequestClose, user }) => {
+const Formulario = ({ isOpen, onRequestClose, user, actualizarTabla }) => {
     const generoOptions = [
       {
         value: '',
@@ -46,10 +52,28 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     },
   ];
 
+  let emailInvalid =false;
+  let formInvalid =false;
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
+  useEffect(() => {
+    if (user) {
+      setForm(user);
+    }
+  }, [user]);
+
   const updateUser = async () => {
     try {
       const respuesta = await axios.put(`${url}/${form.id}`,  form)
       .then(response => {
+        toast.success('usuario actualizado correctamente')
+        actualizarTabla(response.data.data, 'edit');
+        handleClose()
+
         console.log('Usuario actualizado correctamente');
       })
       .catch(error => {
@@ -57,11 +81,27 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
       });
       
     } catch (error) {
+      toast.error('error al actualizar el usuario', error);
+    }
+  };
+
+  const createUser = async () => {
+    try {
+      const respuesta = await axios.post(url,  form)
+      .then(response => {
+        toast.success('usuario creado correctamente')
+        actualizarTabla(response.data.data, 'create');
+        handleClose()
+      })
+      .catch(error => {
+        toast.error('Error al crear el usuario:', error);
+      });
+      
+    } catch (error) {
       console.log(error);
     }
   };
 
-  // const {  handleSubmit, setValue,  formState: { errors } } = useForm();
 
   const [form, setForm ] = useState({})
   const updateFormData = (e) => {
@@ -69,29 +109,30 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     else setForm({...form,['telefono']: e})
   }
 
-  // const onSubmit = (data) => {
-  //   console.log(data);
-  //   return false;
-  // };
+
   const handleSubmit = (event) => {
-    event.preventDefault(); // previene el comportamiento predeterminado del evento
-    // Código para manejar la acción de enviar el formulario
-    if (form.id){
-
-      updateUser();
+ 
+    event.preventDefault(); 
+  
+    Object.keys(form).forEach(element => {
+      if (element == "correo" && !(/\S+@\S+\.\S+/.test(form[element]))){
+       emailInvalid = true;
+      } 
+      if (!form[element]) formInvalid = true
+    });
+    if (formInvalid) toast.error('favor de llenar todos los campos');
+    if (emailInvalid) toast.error('el email tiene un formato invalido');
+    if (!formInvalid && !emailInvalid){
+      if (form.id)updateUser();
+      else createUser();
     }
-    else {
-
-    }
-
+   
+  }
+  const handleClose  = ()=>{
+    setForm({})
+    onRequestClose()
   }
 
-
-  useEffect(() => {
-    if (user) {
-      setForm(user);
-    }
-  }, [user]);
 
   return (
     <Modal
@@ -102,7 +143,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     >
        <Container >        
         <form onSubmit={handleSubmit} className="formContainer">
-    <button className='btnCerrar' onClick={onRequestClose}>Cerrar</button>
+    <button className='btnCerrar' onClick={handleClose}>Cerrar</button>
 
         <h2>¿Cuál es tu nombre?</h2>
         <FormControl className="principalInput">
@@ -110,7 +151,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
            <Input
             id="nombre"
             type="text"
-            name='nombre'
+            name='nombres'
             value={form.nombres}
             onChange={updateFormData}
           />
@@ -176,9 +217,8 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             type="text"
             value={form.correo}
             onChange={updateFormData}
-            // {...register("email", {required: true,  pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })}
           />
-
+         {emailInvalid && <FormHelperText className="errorText">El formato es incorrecto</FormHelperText>}
         </FormControl>
     
         <Button className="btnS" variant="contained" color="primary" type="submit" >
@@ -187,6 +227,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
       </form>
     </Container>
     </Modal>
+    
   );
 };
 
