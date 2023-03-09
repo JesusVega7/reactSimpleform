@@ -1,12 +1,13 @@
 
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import React, { useState, useEffect } from 'react';
 import { Container, FormControl, InputLabel, Input, FormHelperText, Select, MenuItem, Button } from '@material-ui/core';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
+const url = 'http://localhost:3000/api/users';
 
 const customStyles = {
   content: {
@@ -45,26 +46,50 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     },
   ];
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  // const updateUser = async () => {
+  //   try {
+  //     const respuesta = await axios.put(`${url}/${form.id}`, json.strin form)
+  //     .then(response => {
+  //       console.log('Usuario actualizado correctamente');
+  //     })
+  //     .catch(error => {
+  //       console.error('Error al actualizar el usuario:', error);
+  //     });
+      
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // const {  handleSubmit, setValue,  formState: { errors } } = useForm();
 
   const [form, setForm ] = useState({})
-  let buttonLabel;
   const updateFormData = (e) => {
     if (e.target) setForm({...form,[e.target.name]: e.target.value})
     else setForm({...form,['telefono']: e})
   }
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  // const onSubmit = (data) => {
+  //   console.log(data);
+  //   return false;
+  // };
+  const handleSubmit = (event) => {
+    event.preventDefault(); // previene el comportamiento predeterminado del evento
+    // Código para manejar la acción de enviar el formulario
+    if (form.id){
+
+      // updateUser();
+    }
+    else {
+
+    }
+
+  }
 
 
   useEffect(() => {
     if (user) {
       setForm(user);
-      buttonLabel= 'Guardar';
-    } else {
-      buttonLabel= 'Crear';
     }
   }, [user]);
 
@@ -76,7 +101,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
       contentLabel='Example Modal'
     >
        <Container >        
-        <form onSubmit={handleSubmit(onSubmit)} className="formContainer">
+        <form onSubmit={handleSubmit} className="formContainer">
     <button className='btnCerrar' onClick={onRequestClose}>Cerrar</button>
 
         <h2>¿Cuál es tu nombre?</h2>
@@ -88,9 +113,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             name='nombre'
             value={form.nombres}
             onChange={updateFormData}
-            // {...register("nombre", { required: true })}
           />
-          {errors.nombre?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
 
         </FormControl>
     
@@ -102,9 +125,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             name='apellidoPaterno'
             value={form.apellidoPaterno}
             onChange={updateFormData}
-            {...register("apellidoPaterno", { required: true })}
           />
-          {errors.apellidoPaterno?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
         </FormControl>
     
         <FormControl className="principalInput">
@@ -115,9 +136,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             type="text"
             value={form.apellidoMaterno}
             onChange={updateFormData}
-            {...register("apellidoMaterno", { required: true })}
           />
-          {errors.apellidoMaterno?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
         </FormControl>
         
     
@@ -129,7 +148,6 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             name='genero'
             value={form.genero}
             onChange={updateFormData}
-            {...register("genero", { required: true })}
           >
             {generoOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -137,7 +155,6 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
               </option>
             ))}
           </select>
-          {errors.genero?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
         </FormControl>
     
         <FormControl className="principalInput">
@@ -147,9 +164,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             placeholder="Ingrese su número de teléfono*"
             value={form.telefono}
             onChange={updateFormData}
-            {...register("telefono", { required: true })}
           />
-          {errors.telefono?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
         </FormControl>
 
           
@@ -161,14 +176,13 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
             type="text"
             value={form.correo}
             onChange={updateFormData}
-            {...register("email", {required: true,  pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })}
+            // {...register("email", {required: true,  pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/ })}
           />
-          {errors.email?.type === 'required' && <FormHelperText className="errorText">Este campo es requerido</FormHelperText>}
-          {errors.email?.type === 'pattern' && <FormHelperText className="errorText">El formato es incorrecto</FormHelperText>}
+
         </FormControl>
     
         <Button className="btnS" variant="contained" color="primary" type="submit" >
-          {buttonLabel}
+              Guardar
         </Button>
       </form>
     </Container>

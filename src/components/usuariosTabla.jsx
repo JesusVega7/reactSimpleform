@@ -35,6 +35,8 @@ const UsuariosTabla = () => {
       };
 
       const handleCreate = () => {
+        setSelectedUser({});
+
         setModalIsOpen(true);
       };
       
