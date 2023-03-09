@@ -113,16 +113,21 @@ const Formulario = ({ isOpen, onRequestClose, user, actualizarTabla }) => {
   const handleSubmit = (event) => {
  
     event.preventDefault(); 
-  
-    Object.keys(form).forEach(element => {
-      if (element == "correo" && !(/\S+@\S+\.\S+/.test(form[element]))){
-       emailInvalid = true;
-      } 
-      if (!form[element]) formInvalid = true
-    });
+
+    if (Object.keys(form).length ){
+      Object.keys(form).forEach(element => {
+        if (element == "correo" && !(/\S+@\S+\.\S+/.test(form[element]))){
+        emailInvalid = true;
+        } 
+      });
+    } else formInvalid = true;
+
+    
     if (formInvalid) toast.error('favor de llenar todos los campos');
     if (emailInvalid) toast.error('el email tiene un formato invalido');
     if (!formInvalid && !emailInvalid){
+
+      console.log(formInvalid, emailInvalid, 'asd')
       if (form.id)updateUser();
       else createUser();
     }
@@ -132,7 +137,6 @@ const Formulario = ({ isOpen, onRequestClose, user, actualizarTabla }) => {
     setForm({})
     onRequestClose()
   }
-
 
   return (
     <Modal
