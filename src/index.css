@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  padding:0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -10,4 +11,62 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.principalInput, .btnS{
+  min-width: 16rem !important;
+}
+
+.mainContainer{
+  background-color: antiquewhite;
+  min-height: 100vh;
+}
+
+.formContainer{
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: 24rem !important;
+  background-color: white;
+  border-radius: 1%;
+  box-shadow: 0 1rem 4rem rgba(0, 0, 0, 0.25);
+  min-height: max-content;
+  width: fit-content;
+  padding: 2rem;
+}
+
+.generoInput{
+  margin-bottom: 2rem;
+}
+
+.btnS{
+  margin-top: 2rem !important;
+}
+
+.errorText{
+  color: red !important;
+}
+
+.PhoneInputCountryIconImg{
+  max-width: 20px;
+  max-height: 20px;
+}
+.phoneInput{
+  margin-top: 2rem;
+}
+
+#modalForm{
+  background: none!important;
+  overflow: none!important;
+  border-radius: none!important;
+  outline: none!important;
+  padding: 0!important;
+  margin-right: 0!important; 
+}
+
+.btnCerrar{
+  max-width: fit-content;
+  margin-left: auto;
+  margin-top:-1rem;
+ 
+  margin-bottom: 1rem;
 }
