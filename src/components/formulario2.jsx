@@ -46,20 +46,20 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     },
   ];
 
-  // const updateUser = async () => {
-  //   try {
-  //     const respuesta = await axios.put(`${url}/${form.id}`, json.strin form)
-  //     .then(response => {
-  //       console.log('Usuario actualizado correctamente');
-  //     })
-  //     .catch(error => {
-  //       console.error('Error al actualizar el usuario:', error);
-  //     });
+  const updateUser = async () => {
+    try {
+      const respuesta = await axios.put(`${url}/${form.id}`,  form)
+      .then(response => {
+        console.log('Usuario actualizado correctamente');
+      })
+      .catch(error => {
+        console.error('Error al actualizar el usuario:', error);
+      });
       
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // const {  handleSubmit, setValue,  formState: { errors } } = useForm();
 
@@ -78,7 +78,7 @@ const Formulario = ({ isOpen, onRequestClose, user }) => {
     // Código para manejar la acción de enviar el formulario
     if (form.id){
 
-      // updateUser();
+      updateUser();
     }
     else {
 
